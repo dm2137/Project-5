@@ -130,7 +130,8 @@ catalog.wsgi:
 Changed ssh port in /etc/ssh/sshd_config
 	from Port 22  =>  change to 2200
 
-Created new user named grader with sudo permissions
+Created new user named grader with sudo permissions;  
+		password for grader is full15nan0
 
 Updates all currently installed packages
 
@@ -174,6 +175,35 @@ html
 ● http://serverfault.com/questions/110154/whatsthedefaultsuperuserusernamepasswordforpostgr
 esafteranewinstall
 
+PRIVATE KEY:
+
+-----BEGIN RSA PRIVATE KEY-----
+MIIEpQIBAAKCAQEAxZdyWexJsPDsDNQOxE1SdtClTKYs3oZyTHAznBkYxkcQhRqx
+30M2zy04Hmsqw05NSyjurc0uMA02uTMexZXHhzqy7/T91iGjWn55XR4turg/ypGM
+ySXAWcACH9ufeJDDAhLmkyBze0iQjqApQCsQROM/nZdt2Ty5QYgJBnt6cMf8XiwM
+osRqZKqCoB1kea5auvNr49A9yjKGK3j8iqNWrBc2mDEkKVjPQ+Ek190o0B99RMQC
+Ve9a361h7RJGzZyhV8+qwWLFG8+fWWWues1TbfB54JwjM9xBmGaeJu3dNbpnnJQL
+klWdsAJ4du+nbUuuwPXQ78fxEInrVpLdcgqBBQIDAQABAoIBAQDAj0MFl1yJb4Db
+T53EeIYw/EzbUebQRb4F+CKTsXGPaZoT3VwS9HHpnWvfWRknlJuG77EK97ZXZck6
+2zLV4427n9zaNKtbjxSfEDo+ITb3jK++PfIx5PR7gr+PRH05BfrFfp3uK+Xe82zN
+UhBhVJZaTAynC/gliSQRVP1Wr+c3GDfKfYYaNwbohl7X1+e0JSkWKHoQNWqbWACX
+OcpNaC/sfNgrIFmHSNV0oABEDKL5NRi7liFR9cot0VSHETFsTgxBkzneG3UhOvl7
+gHEb5EqAdhvNkd06m/elXegyqe3E5SXpiRQsfzrDlbr+bBk8JX//v21FZZUl9hL2
+rVpXb/fRAoGBAOVTp31lNyUGO+cntUrfympOtMitHuZSqBiiUAl71+18XsdL7tHr
+impM7BXNUnErpaqtzFjEuW6M6O1DOLIE4uBBN8QDuQ1UFvdSdCBW2FG7rP2oV96y
+uqoAC+3lQjUGNudHgbMFFTYICr8M8Ie8JXvu0HyHba8OrHjBOMUyJbofAoGBANyS
+25WrteTuiDsN+/FXhqt7vg0sZs8Fwna1tNDYsGPL7XQXhjPgUu/SPFaUnXKpLFvt
+Hh8/5PzWxQYEhqwXFNHgWwaoSRsN3ZXukMsQlWA1UMJyJ8gaGRHPU06YySPadmxP
+8fPHEbg2BMfoRtM2mPZvctRZJEvelFEq4APN46hbAoGBALCWPxXW96Sh7UStFfPm
+6bX8j0crz+xpX5lAe0MiQv5TU6RBe0/YAQij3PNY3I/anUIVfJIqQeO3y7DPn3ut
+OYqXjbp5Z2i1BM5DhrpURVSCoM3ecHNCy2wWhxkT/WxZMbPcIypX0qJ9hNDixOCw
+Z2jMV2xc2IABW5vMpctrNxPfAoGBAMph5SB7ILYhNtYYiqZyTJpjO4oSx3IEMt2A
+85r8dzvaDNGMFBLdLLvnBn3admySVKUz94NsuMpUtQpEdNzJgMzhMiP1nL46Bqpe
+7nOjj6tqv+Lpox6y83Wn6SQgg81l0WqoH7QxX0zKI7DYqsN5QPg8Yfv8npUOcL/Y
+uxpCezQpAoGAOtNKptafWzlyk7lA3zd6pPgWej6VM+fTdW4cN/jXu/BdFyyHuR7P
+GCoaYlKGxk3JmNfyPi8XdzNlql2xCUg6WCiwxkRpIK1Ar9jV8p2+UwZQ6dWKmenF
+wS85lZoD+whKq1TCMTGYrDJYw3D8qPcKxM8JZ2X8VG4ZtXbyBlfWb48=
+-----END RSA PRIVATE KEY-----
 
 
 
@@ -183,53 +213,3 @@ esafteranewinstall
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-5) Running the Catalog App
-
-While in VM, change directory to catalog (cd /vagrant/catalog)
-
-Type ls to ensure that you are inside the directory that contains application.py, database_setup.py, and two directories named 'templates' and 'static'
-
-Now type python database_setup.py to initialize the database.
-
-Type python lotsofitems.py to populate the database with catalog items. (Optional)
-
-Type python application.py to run the Flask web server. 
-
-In your browser visit http://localhost:8000 to view the Catalog app.
-
-There are four main parts to this project:
-1)the HTML (structure of the pages)
-2)the CSS (the style of the pages)
-3)the Flask Application (to put it online)
-	- use version 0.9 of Flask (pip install flask==0.9)
-	This should avoid the error of: TypeError: <oauth2client.client.OAuth2Credentials object at 0xb5c9dccc> is not JSON serializable
-
-4)it must include authentication/authorization to allow users to login before making changes
-the database (to store and organize the information)
-
-This project is a web application that provides a list of items within a variety of categories 
-and integrate third party user registration and authentication. Authenticated users should have the ability to post, edit, 
-and delete their own items.
-
-JSON API Endpoint (GET Request):
-	APIs that return JSON objects have been included for a list of the categories in the catalog,
-		and the specific items in an identified category.
-
-		- to view catalog info, go to '/catalog/JSON/'
-		- for items in category, go to '/catalog/<int:catalog_id>/items/JSON/'
-
-=======
-# Project-5
-Project 5 for Linux server and Catalog app web publishing
->>>>>>> 0ab2259c39b6a72101c6bb939cc64cc3a2663afd
