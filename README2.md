@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 Readme file for Project 5 of the Udacity Full Stack Web Developer Nanodegree.
 
 NOTE:   This project is not finalized yet.   Need to complete the Amazon EC2 instance and firewall asks.   Course work focused on using Google with API Endpoints, so in the process of getting educated on Amazon EC2.  Any documents you can highlight here for me to focus on is greatly appreciated.  There is a lot of information to digest.
@@ -228,3 +229,7 @@ JSON API Endpoint (GET Request):
 		- to view catalog info, go to '/catalog/JSON/'
 		- for items in category, go to '/catalog/<int:catalog_id>/items/JSON/'
 
+=======
+# Project-5
+Project 5 for Linux server and Catalog app web publishing
+>>>>>>> 0ab2259c39b6a72101c6bb939cc64cc3a2663afd
