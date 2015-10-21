@@ -126,6 +126,7 @@ catalog.wsgi:
 	<VirtualHost *:80>
 	        ServerName localhost
 	        WSGIScriptAlias / /var/www/catalog/catalog.wsgi
+	        ServerAlias ec2-52-10-245-33.us-west-2.compute.amazonaws.com
 	        <Directory /var/www/catalog/catalog/>
 	                Order allow,deny
 	                Allow from all
