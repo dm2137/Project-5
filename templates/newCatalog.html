@@ -1,0 +1,25 @@
+<html>
+{% extends "main.html" %}
+{% block content %}
+<head>
+    <link rel=stylesheet type=text/css href="{{url_for('static', filename='style2.css')}}">
+    </head>
+<body>
+<div class = 'pane'>
+<h1>Add New Category</h1>
+
+<form action="{{url_for('newCatalog')}}" method = 'post'>
+
+<input type = 'text' size = '30' name = 'name'>
+
+<input type = 'submit' value = 'Create'>
+</form>
+
+<a href ='{{url_for('showCatalog', catalog = catalog)}}' >Cancel</a>
+
+
+</div>
+</body>
+{% endblock %}
+
+</html>

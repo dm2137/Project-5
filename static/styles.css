@@ -1,0 +1,26 @@
+
+body            { font-family: sans-serif; background-color: #FFFFCC; 
+		  background-image: url('http://cdn.dailyclipart.net/wp-content/uploads/medium/clipart0020.jpg');
+		  background-repeat: no-repeat; background-position: right center;
+		}
+ h1, h2, h3, h4 { color: #003300;}
+h1, h2          { font-family: 'Arial', serif; }
+h1              { border-bottom: 2px solid #eee; }
+h2              { font-size: 1.2em; }
+
+p               { color: #696969;}
+
+a.first {text-decoration: none; color:#FF6600;   font-size: 1em;}
+a.second {text-decoration: none; color:blue; font-size: 1.3em;}
+
+.center {margin: 50px 100px}
+
+.pane {position:absolute; left: 25%; border: 2px solid;
+    border-radius: 25px; padding: 5px; margin: 5px; border-color: #808080; background-color: #ffe4b5; }
+.header         {left:50%; text-align: center;}
+.name {width:50%;display: inline-block; float: left;}
+.description {}
+.price {text-align: right; width:50%; float: right; }
+.editdeletepane{}
+
+.flash          { background: #cee5F5; }

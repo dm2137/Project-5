@@ -1,8 +1,6 @@
 <<<<<<< HEAD
 Readme file for Project 5 of the Udacity Full Stack Web Developer Nanodegree.
 
-NOTE:   This project is not finalized yet.   Need to complete the Amazon EC2 instance and firewall asks.   Course work focused on using Google with API Endpoints, so in the process of getting educated on Amazon EC2.  Any documents you can highlight here for me to focus on is greatly appreciated.  There is a lot of information to digest.
-
 
 TOOL REQUIREMENTS:
 
@@ -82,7 +80,23 @@ DIRECTORY STRUCTURE:
 				
 				/venv
 		/catalog.wsgi
-		
+______________________________________________________
+http://www.hcidata.info/host2ip.cgi
+
+IP Address: 54.148.70.58
+
+Location   : United States (95% accuracy)
+
+Host Name  : ec2-54-148-70-58.us-west-2.compute.amazonaws.com
+
+Details of Computer Using This Web Service
+
+Below is shown the name of the computer that is using this web service. If this computer is behind a firewall or uses a proxy server, the name shown will be that of the firewall  -computer or proxy server. Many ISPs route internet traffic via a proxy server to reduce network traffic. Most commercial organisations protect their internal network (Intranet) by routing all traffic to and from the Internet via a firewall. A firewall computer of proxy server is sometimes called a 'gateway'.
+
+IP Address : 172.11.73.3
+Host Name  : 172-11-73-3.lightspeed.cicril.sbcglobal.net		
+
+_________________________________________________________________
 Vagrantfile: 
 config.vm.box = "ubuntu/trusty64"
   # Create a forwarded port mapping which allows access to a specific port
@@ -131,9 +145,11 @@ Changed ssh port in /etc/ssh/sshd_config
 	from Port 22  =>  change to 2200
 
 Created new user named grader with sudo permissions;  
-		password for grader is full15nan0
+		password for grader is full15nan0  
 
 Updates all currently installed packages
+   sudo apt-get upgrade
+
 
 Configured the local timezone to UTC
 
@@ -146,11 +162,36 @@ Created a POSTGRESQL user/role named catalog with limited permissions to the dat
 
 Updated my Catalog project to utilize POSTGRESQL vs SQLlite.  Catalog application working great on the localhost:8080
 
-PENDING Items:
-1) Still need to configure the Uncomplicated Firewall (UFW) to only allow incoming connections for SSH (port 2200), HTTP (port 80), and NTP (port 123)
+Configured the Uncomplicated Firewall (UFW) to only allow incoming connections for SSH (port 2200), HTTP (port 80), and NTP (port 123)
 
-2) Need more time to understand Amazon EC2 and publish site.  In coursework focus was on Google using API Endpoints.  So need to get a bit more educated on Amazon. Any documents you can highlight here for me to focus on is greatly appreciated.  There is a lot of information to digest.
+---------------------------------------------------------
+My Amazon EC2 Instance public URL is:ec2-52-10-245-33.us-west-2.compute.amazonaws.com
 
+I was able to link my computer with Amazon's EC2 environment:
+Deborah (master) Linux $ ssh -i ~/fullstack/vagrant/Linux/catalog-key-pair-uswe
+st2.pem ec2-user@ec2-52-10-245-33.us-west-2.compute.amazonaws.com
+The authenticity of host 'ec2-52-10-245-33.us-west-2.compute.amazonaws.com (52.1
+0.245.33)' can't be established.
+ECDSA key fingerprint is b9:07:a6:d0:fd:27:cc:d7:7d:de:ab:4d:7d:95:c5:29.
+Are you sure you want to continue connecting (yes/no)? yes
+Warning: Permanently added 'ec2-52-10-245-33.us-west-2.compute.amazonaws.com,52.
+10.245.33' (ECDSA) to the list of known hosts.
+
+       __|  __|_  )
+       _|  (     /   Amazon Linux AMI
+      ___|\___|___|
+
+https://aws.amazon.com/amazon-linux-ami/2015.09-release-notes/
+No packages needed for security; 14 packages available
+Run "sudo yum update" to apply all updates.
+[ec2-user@ip-10-0-0-46 ~]$ df -h
+Filesystem      Size  Used Avail Use% Mounted on
+/dev/xvda1      7.8G  1.1G  6.6G  14% /
+devtmpfs        489M   56K  489M   1% /dev
+tmpfs           498M     0  498M   0% /dev/shm
+[ec2-user@ip-10-0-0-46 ~]$
+
+-------------------------------------------------------
 
 Resources used:
 ● https://www.digitalocean.com/community/tutorials/howtoaddanddeleteusersonanubuntu1404

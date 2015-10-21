@@ -1,0 +1,45 @@
+{% extends "main.html" %}
+{% block content %}
+{% include "header.html" %}
+
+<head>
+    <link rel=stylesheet type=text/css href="{{url_for('static', filename='style2.css')}}">
+    </head>
+
+<div class='pane'>
+<h1 class='center'> Categories </h1>
+<body>
+   <div class='flash'>
+     {% with messages = get_flashed_messages() %}
+      {% if messages %}
+          
+        <ul>
+        {% for message in messages %}
+            <li> <strong> {{ message }} </strong> </li>
+        {% endfor %}
+        </ul>
+        {% endif %}
+    </div>
+    {% endwith %}
+
+<div class='center'>
+
+<a class='first' href ='{{url_for('newCatalog') }}'>Add a new catagory</a>
+
+
+</br>
+
+{% for i in catalog %}
+  </br>
+
+  <a class='second' href ='{{url_for('showItems', catalog_id = i.id) }}'>{{i.name}}</a> 
+  <a class='forth' href ='{{url_for('editCatalog', catalog_id = i.id) }}'<i>edit</i></a> 
+  </br>
+
+ 
+
+{% endfor %}
+</div>
+</body>
+
+{% endblock %}

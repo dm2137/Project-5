@@ -1,0 +1,59 @@
+<html>
+{% extends "main.html" %}
+{% block content %}
+<head>
+    <link rel=stylesheet type=text/css href="{{url_for('static', filename='style2.css')}}">
+    </head>
+<body>
+<div class='pane'>
+
+{% with messages = get_flashed_messages() %}
+{% if messages %}
+<ul>
+{% for message in messages %}
+   <li class='flash'><strong>{{message}}</strong></li>
+   {% endfor %}
+</ul>
+{% endif %}
+{% endwith %}
+
+<h1> Edit Item:  {{i.name}}</h1>
+</br>
+</br>
+
+<form action="{{url_for('editItem', catalog_id=catalog_id, item_id=i.id)}}" method = 'post'>
+
+<p>Update Name:</p>
+<input type='text' size='30' name='name' placeholder = '{{i.name}}' default= '{{i.name}}'>
+
+<p>Description:</p>
+<input type = 'text' size = '200' name = 'description' placeholder = '{{i.description}}' default= '{{i.description}}'>
+
+<p>Price:</p>
+<input type = 'text' size = '30' name = 'price' placeholder = '{{i.price}}' default = '{{i.price}}'>
+
+
+<p>Current Category is {{c.name}}:</p>
+
+<p>Select Category:</p>
+
+{% for r in catalog %}
+
+<input type = 'radio' name = 'category'   value = '{{r.catalog_id}}'>{{r.name}}
+</br>
+
+{% endfor %}
+
+</br></br>
+
+<input type='submit' value='Edit'>
+
+<a href ='{{url_for('showItems', catalog_id=catalog_id)}}' >Cancel</a>
+
+
+</form>
+</div>
+</body>
+
+{% endblock %}
+</html>
