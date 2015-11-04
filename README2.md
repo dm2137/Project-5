@@ -1,6 +1,11 @@
 <<<<<<< HEAD
 Readme file for Project 5 of the Udacity Full Stack Web Developer Nanodegree.
 
+++++++++++++++++++++++++++++++
+Notes:  A known issue at this point:
+	1) I'm getting a 400 error when authenticating with Google.  Facebook works fine.
+	
++++++++++++++++++++++++++++++++++++++++++++
 
 TOOL REQUIREMENTS:
 
@@ -63,7 +68,7 @@ When you want to log out, type "exit" at the shell prompt.  To turn the virtual 
 
 5) Install and configure Apache to serve a Python mod_wsgi application
 6) Install and configure PostgreSQL
-
+++++++++++++++++++++++++++++++++++++++++++++++
 DIRECTORY STRUCTURE:
 /var
 	/www
@@ -80,120 +85,269 @@ DIRECTORY STRUCTURE:
 				
 				/venv
 		/catalog.wsgi
-______________________________________________________
-http://www.hcidata.info/host2ip.cgi
++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-IP Address: 54.148.70.58
+Public IP Address : 52.32.13.248
 
 Location   : United States (95% accuracy)
 
-Host Name  : ec2-54-148-70-58.us-west-2.compute.amazonaws.com
-
-Details of Computer Using This Web Service
-
-Below is shown the name of the computer that is using this web service. If this computer is behind a firewall or uses a proxy server, the name shown will be that of the firewall  -computer or proxy server. Many ISPs route internet traffic via a proxy server to reduce network traffic. Most commercial organisations protect their internal network (Intranet) by routing all traffic to and from the Internet via a firewall. A firewall computer of proxy server is sometimes called a 'gateway'.
+Host Name  : ec2-52-32-13-248.us-west-2.compute.amazonaws.com
 
 IP Address : 172.11.73.3
 Host Name  : 172-11-73-3.lightspeed.cicril.sbcglobal.net		
 
-_________________________________________________________________
-Vagrantfile: 
-config.vm.box = "ubuntu/trusty64"
-  # Create a forwarded port mapping which allows access to a specific port
-  # within the machine from a port on the host machine. In the example below,
-  # accessing "localhost:8080" will access port 80 on the guest machine.
-  # config.vm.network "forwarded_port", guest: 80, host: 8080
-  config.vm.network "forwarded_port", guest: 80, host:8080, auto_correct: true
-  config.vm.network "forwarded_port", guest: 2200, host: 2200, id: "ssh"
-  config.ssh.port = 2200 
-end		
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+Project steps:
+------
+1 & 2 - Create Development Environment: Launch Virtual Machine and SSH into the server
+	1. Create new development environment.
+	2. Download private keys and write down your public IP address.
+	3. Move the private key file into the folder ~/.ssh:
+		$ mv ~/Downloads/udacity_key.rsa ~/.ssh/
+	4. Set file rights (only owner can write and read.):
+		$ chmod 600 ~/.ssh/udacity_key.rsa
+	5. SSH into the instance:
+		<pre>$ ssh -i ~/.ssh/udacity_key.rsa root@PUPLIC-IP-ADDRESS
+-----
+3 & 4 - User Management: Create a new user and give user the permission to sudo
+	1. Create a new user:
+		$ adduser NEWUSER
+	2. Give new user the permission to sudo
+		1. Open the sudo configuration:
+			$ visudo
+		2. Add the following line below root ALL...:
+			NEWUSER ALL=(ALL:ALL) ALL
+		3. *List all users (Source: Ask Ubuntu):
+			$ cut -d: -f1 /etc/passwd
+-----
+5 - Update all currently installed packages
+	1. Update the list of available packages and their versions:
+		$ sudo apt-get update
+-----
+6 - Change the SSH port from 22 to 2200 and configure SSH access
+	1. Change ssh config file:
+		1. Open the config file:
+			$ nano /etc/ssh/sshd_config
+		2. Change to Port 2200.
+		3. Change PermitRootLogin from without-password to no.
+		4. * To get more detailed logging messasges, open /var/log/auth.log and change LogLevel from INFO to VERBOSE.
+		5. Temporalily change PasswordAuthentication from no to yes.
+		6. Append UseDNS no.
+		7. Append AllowUsers NEWUSER.
 
-
-catalog.wsgi:
-		
-		!/usr/bin/python
-		import sys
-		import logging
-		logging.basicConfig(stream=sys.stderr)
-		sys.path.insert(0,"/var/www/catalog/catalog")
-		
-		from catalog import app as application
-		application.secret_key = 'super_secret_key'
-		
-		
-/etc/apache2/sites-available/catalog.conf    #(configures virtual host)
+	2. Restart SSH Service:
+		$ /etc/init.d/ssh restart or # service sshd restart
+	3. Create SSH Keys:
+		1. Generate a SSH key pair on the local machine:
+			$ ssh-keygen
+		2. Copy the public id to the server:
+			$ ssh-copy-id username@remote_host -p**_PORTNUMBER_**
+		3. Login with the new user:
+			$ ssh -v grader@PUBLIC-IP-ADDRESS -p2200
+		4. Open SSHD config:
+			$ sudo nano /etc/ssh/sshd_config
+		5. Change PasswordAuthentication back from yes to no.
+-----
+7 - Configure the Uncomplicated Firewall (UFW) to only allow incoming connections for SSH (port 2200), HTTP (port 80), and NTP (port 123)
+Source: Ubuntu documentation
+	1. Turn UFW on with the default set of rules:
+		$ sudo ufw enable
+	2. *Check the status of UFW:
+		$ sudo ufw status verbose
+	3. Allow incoming TCP packets on port 2200 (SSH):
+		$ sudo ufw allow 2200/tcp
+	4. Allow incoming TCP packets on port 80 (HTTP):
+		$ sudo ufw allow 80/tcp
+	5. Allow incoming UDP packets on port 123 (NTP):
+		$ sudo ufw allow 123/udp
+-----
+8 - Configure the local timezone to UTC
+	1. Open the timezone selection dialog:
+		$ sudo dpkg-reconfigure tzdata
+	2. Then chose 'None of the above', then UTC.
+-----	
+9 - Install and configure Apache to serve a Python mod_wsgi application
+	1. Install Apache web server:
+		$ sudo apt-get install apache2
+	2. Open a browser and open your public ip address, e.g. http://52.32.13.248/ - It should say 'It works!' on the top of the page.
+	3. Install mod_wsgi for serving Python apps from Apache and the helper package python-setuptools:
+		$ sudo apt-get install python-setuptools libapache2-mod-wsgi
+	4. Restart the Apache server for mod_wsgi to load:
+		$ sudo service apache2 restart
+-----	
+10 - Install git, clone and setup your Catalog App project
 	
-	<VirtualHost *:80>
-	        ServerName localhost
-	        WSGIScriptAlias / /var/www/catalog/catalog.wsgi
-	        ServerAlias ec2-52-10-245-33.us-west-2.compute.amazonaws.com
-	        <Directory /var/www/catalog/catalog/>
-	                Order allow,deny
-	                Allow from all
-	        </Directory>
-	        Alias /static /var/www/catalog/catalog/static
-	        <Directory> /var/www/catalog/catalog/static/>
-	                Order allow,deny
-	                Allow from all
-	        </Directory>
-	        ErrorLog ${APACHE_LOG_DIR}/error.log
-	        LogLevel warn
-	        CustomLog ${APACHE_LOG_DIR}/access.log combined
-	</VirtualHost>
+10.1 - Install and configure git
+	1. Install Git:
+		$ sudo apt-get install git
+	2. Set your name, e.g. for the commits:
+		$ git config --global user.name "YOUR NAME"
+	3. Set up your email address to connect your commits to your account:
+		$ git config --global user.email "YOUR EMAIL ADDRESS"
+10.2 - Setup for deploying a Flask Application on Ubuntu VPS
+	1. Extend Python with additional packages that enable Apache to serve Flask applications:
+		$ sudo apt-get install libapache2-mod-wsgi python-dev
+	2. Enable mod_wsgi (if not already enabled):
+		$ sudo a2enmod wsgi
+	3. Create a Flask app:
+		1. Move to the www directory:
+			$ cd /var/www
+		2. Setup a directory for the app, e.g. catalog:
+			1. $ sudo mkdir catalog
+			2. $ cd catalog and $ sudo mkdir catalog
+			3. $ cd catalog and $ sudo mkdir static templates
+			4. Create the file that will contain the flask application logic:
+				$ sudo nano __init__.py
+			5. Paste in the following code:
+  				from flask import Flask  
+  				app = Flask(__name__)  
+  				@app.route("/")  
+  				def hello():  
+    			return "Veni vidi vici!!"  
+  				if __name__ == "__main__":  
+    				app.run()  
+	4. Install Flask
+		1. Install pip installer:
+			$ sudo apt-get install python-pip
+		2. Install virtualenv:
+			$ sudo pip install virtualenv
+		3. Set virtual environment to name 'venv':
+			$ sudo virtualenv venv
+		4. Enable all permissions for the new virtual environment (no sudo should be used within):
+			$ sudo chmod -R 777 venv
+		5. Activate the virtual environment:
+			$ source venv/bin/activate
+		6. Install Flask inside the virtual environment:
+			$ pip install Flask
+		7. Run the app:
+			$ python __init__.py
+		8. Deactivate the environment:
+			$ deactivate
+	5. Configure and Enable a New Virtual Host#
+		1. Create a virtual host config file
+			$ sudo nano /etc/apache2/sites-available/catalog.conf
+		2. Paste in the following lines of code and change names and addresses regarding your application:
+		  <VirtualHost *:80>
+		      ServerName PUBLIC-IP-ADDRESS
+		      ServerAdmin admin@PUBLIC-IP-ADDRESS
+		      WSGIScriptAlias / /var/www/catalog/catalog.wsgi
+		      <Directory /var/www/catalog/catalog/>
+		          Order allow,deny
+		          Allow from all
+		      </Directory>
+		      Alias /static /var/www/catalog/catalog/static
+		      <Directory /var/www/catalog/catalog/static/>
+		          Order allow,deny
+		          Allow from all
+		      </Directory>
+		      ErrorLog ${APACHE_LOG_DIR}/error.log
+		      LogLevel warn
+		      CustomLog ${APACHE_LOG_DIR}/access.log combined
+		  </VirtualHost>
+		3. Enable the virtual host:
+			$ sudo a2ensite catalog
 	
+	6. Create the .wsgi File and Restart Apache
+		1. Create wsgi file:
+			$ cd /var/www/catalog and $ sudo nano catalog.wsgi
+		2. Paste in the following lines of code:
+		  #!/usr/bin/python
+		  import sys
+		  import logging
+		  logging.basicConfig(stream=sys.stderr)
+		  sys.path.insert(0,"/var/www/catalog/")
+		  
+		  from catalog import app as application
+  		  application.secret_key = 'Add your secret key'
 			
-Changed ssh port in /etc/ssh/sshd_config
-	from Port 22  =>  change to 2200
+		1. Restart Apache:
+			$ sudo service apache2 restart
 
-Created new user named grader with sudo permissions;  
-		password for grader is full15nan0  
+10.3 - Clone GitHub repository and make it web inaccessible
+	1. Clone project 3 solution repository on GitHub:
+		$ git clone https://github.com/xxxxxx
+	2. Move all content of created catalog directory to/var/www/catalog/catalog/-directory and delete the leftover empty directory.
+	3. Make the GitHub repository inaccessible:
+		1. Create and open .htaccess file:
+			$ cd /var/www/catalog/ and $ sudo nano .htaccess
+		2. Paste in the following:
+			RedirectMatch 404 /\.git
 
-Updates all currently installed packages
-   sudo apt-get upgrade
+10.4 - Install needed modules & packages
+	1. Activate virtual environment:
+		$ source venv/bin/activate
+	2. Install httplib2 module in venv:
+		$ pip install httplib2
+	3. Install requests module in venv:
+		$ pip install requests
+	4. Install flask.ext.seasurf
+		$ sudo pip install flask-seasurf
+	5. Install oauth2client.client:
+		$ sudo pip install --upgrade oauth2client
+	6. Install SQLAlchemy:
+		$ sudo pip install sqlalchemy
+	7. Install the Python PostgreSQL adapter psycopg:
+		$ sudo apt-get install python-psycopg2
 
+10,5 - Install and configure PostgreSQL
 
-Configured the local timezone to UTC
+	1. Install PostgreSQL:
+		$ sudo apt-get install postgresql postgresql-contrib
+	2. Check that no remote connections are allowed (default):
+		$ sudo nano /etc/postgresql/9.3/main/pg_hba.conf
+	3. Open the database setup file:
+		$ sudo nano database_setup.py
+	4. Change the line starting with "engine" to (fill in a password):
+python engine = create_engine('postgresql://catalog:PW-FOR-DB@localhost/catalog')
+	5. Change the same line in application.py respectively
+	6. Create needed linux user for psql:
+		$ sudo adduser catalog (choose a password)
+	7. Change to default user postgres:
+		$ sudo su - postgre   instead I used sudo -u postgres -I (do not need root access in etc/sudoers)
+	8. Connect to the system:
+		$ psql
+	9. Add postgre user with password:
+		1. Create user with LOGIN role and set a password:
+		# CREATE USER catalog WITH PASSWORD 'PW-FOR-DB'; (# stands for the command prompt in psql)
+		2. Allow the user to create database tables:
+		# ALTER USER catalog CREATEDB;
+		3. *List current roles and their attributes: # \du
+	10. Create database:
+		# CREATE DATABASE catalog WITH OWNER catalog;
+	11. Connect to the database catalog # \c catalog
+	12. Revoke all rights:
+		# REVOKE ALL ON SCHEMA public FROM public;
+	14. Grant only access to the catalog role:
+		# GRANT ALL ON SCHEMA public TO catalog;
+	15. Exit out of PostgreSQl and the postgres user:
+		# \q, then $ exit
+	16. Create postgreSQL database schema:
+		$ python database_setup.py
 
-Created a POSTGRESQL user/role named catalog with limited permissions to the database (i.e. NOSUPERUSER)
-                             List of roles
- Role name |                   Attributes                   | Member of
------------+------------------------------------------------+-----------
- catalog   | Create role, Create DB                         | {}
- postgres  | Superuser, Create role, Create DB, Replication | {}
+10.6 - Run application
+	1. Restart Apache:
+		$ sudo service apache2 restart
+	2. Open a browser and put in your public ip-address as url, e.g. 52.25.0.41 - if everything works, the application should come up
+	3. *If getting an internal server error, check the Apache error files:
+		1. View the last 20 lines in the error log: $ sudo tail -20 /var/log/apache2/error.log
+		
+10.7 - Get OAuth-Logins Working
+	1. Open http://www.hcidata.info/host2ip.cgi and receive the Host name for your public IP-address, e.g. for 52.25.0.41, its ec2-52-25-0-41.us-west-2.compute.amazonaws.com
+	2. Open the Apache configuration files for the web app: $ sudo nano /etc/apache2/sites-available/catalog.conf
+	3. Paste in the following line below ServerAdmin:
+	ServerAlias HOSTNAME, e.g. ec2-52-32-13-248.us-west-2.compute.amazonaws.com
+	4. Enable the virtual host:
+		$ sudo a2ensite catalog
+	5. To get the Google+ authorization working:
+		1. Go to the project on the Developer Console: https://console.developers.google.com/project
+		2. Navigate to APIs & auth > Credentials > Edit Settings
+		3. add your host name and public IP-address to your Authorized JavaScript origins and your host name + oauth2callback to Authorized redirect URIs, e.g. http://ec2-52-32-13-248.us-west-2.compute.amazonaws.com/oauth2callback
+	6. To get the Facebook authorization working:
+		1. Go on the Facebook Developers Site to My Apps https://developers.facebook.com/apps/
+		2. Click on your App, go to Settings and fill in your public IP-Address including prefixed hhtp:// in the Site URL field
+		3. To leave the development mode, so others can login as well, also fill in a contact email address in the respective field, "Save Changes", click on 'Status & Review'
 
-Updated my Catalog project to utilize POSTGRESQL vs SQLlite.  Catalog application working great on the localhost:8080
-
-Configured the Uncomplicated Firewall (UFW) to only allow incoming connections for SSH (port 2200), HTTP (port 80), and NTP (port 123)
-
----------------------------------------------------------
-My Amazon EC2 Instance public URL is:ec2-52-10-245-33.us-west-2.compute.amazonaws.com
-
-I was able to link my computer with Amazon's EC2 environment:
-Deborah (master) Linux $ ssh -i ~/fullstack/vagrant/Linux/catalog-key-pair-uswe
-st2.pem ec2-user@ec2-52-10-245-33.us-west-2.compute.amazonaws.com
-The authenticity of host 'ec2-52-10-245-33.us-west-2.compute.amazonaws.com (52.1
-0.245.33)' can't be established.
-ECDSA key fingerprint is b9:07:a6:d0:fd:27:cc:d7:7d:de:ab:4d:7d:95:c5:29.
-Are you sure you want to continue connecting (yes/no)? yes
-Warning: Permanently added 'ec2-52-10-245-33.us-west-2.compute.amazonaws.com,52.
-10.245.33' (ECDSA) to the list of known hosts.
-
-       __|  __|_  )
-       _|  (     /   Amazon Linux AMI
-      ___|\___|___|
-
-https://aws.amazon.com/amazon-linux-ami/2015.09-release-notes/
-No packages needed for security; 14 packages available
-Run "sudo yum update" to apply all updates.
-[ec2-user@ip-10-0-0-46 ~]$ df -h
-Filesystem      Size  Used Avail Use% Mounted on
-/dev/xvda1      7.8G  1.1G  6.6G  14% /
-devtmpfs        489M   56K  489M   1% /dev
-tmpfs           498M     0  498M   0% /dev/shm
-[ec2-user@ip-10-0-0-46 ~]$
-
--------------------------------------------------------
-
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 Resources used:
 ● https://www.digitalocean.com/community/tutorials/howtoaddanddeleteusersonanubuntu1404
 vps
@@ -217,35 +371,6 @@ html
 ● http://serverfault.com/questions/110154/whatsthedefaultsuperuserusernamepasswordforpostgr
 esafteranewinstall
 
-PRIVATE KEY:
-
------BEGIN RSA PRIVATE KEY-----
-MIIEpQIBAAKCAQEAxZdyWexJsPDsDNQOxE1SdtClTKYs3oZyTHAznBkYxkcQhRqx
-30M2zy04Hmsqw05NSyjurc0uMA02uTMexZXHhzqy7/T91iGjWn55XR4turg/ypGM
-ySXAWcACH9ufeJDDAhLmkyBze0iQjqApQCsQROM/nZdt2Ty5QYgJBnt6cMf8XiwM
-osRqZKqCoB1kea5auvNr49A9yjKGK3j8iqNWrBc2mDEkKVjPQ+Ek190o0B99RMQC
-Ve9a361h7RJGzZyhV8+qwWLFG8+fWWWues1TbfB54JwjM9xBmGaeJu3dNbpnnJQL
-klWdsAJ4du+nbUuuwPXQ78fxEInrVpLdcgqBBQIDAQABAoIBAQDAj0MFl1yJb4Db
-T53EeIYw/EzbUebQRb4F+CKTsXGPaZoT3VwS9HHpnWvfWRknlJuG77EK97ZXZck6
-2zLV4427n9zaNKtbjxSfEDo+ITb3jK++PfIx5PR7gr+PRH05BfrFfp3uK+Xe82zN
-UhBhVJZaTAynC/gliSQRVP1Wr+c3GDfKfYYaNwbohl7X1+e0JSkWKHoQNWqbWACX
-OcpNaC/sfNgrIFmHSNV0oABEDKL5NRi7liFR9cot0VSHETFsTgxBkzneG3UhOvl7
-gHEb5EqAdhvNkd06m/elXegyqe3E5SXpiRQsfzrDlbr+bBk8JX//v21FZZUl9hL2
-rVpXb/fRAoGBAOVTp31lNyUGO+cntUrfympOtMitHuZSqBiiUAl71+18XsdL7tHr
-impM7BXNUnErpaqtzFjEuW6M6O1DOLIE4uBBN8QDuQ1UFvdSdCBW2FG7rP2oV96y
-uqoAC+3lQjUGNudHgbMFFTYICr8M8Ie8JXvu0HyHba8OrHjBOMUyJbofAoGBANyS
-25WrteTuiDsN+/FXhqt7vg0sZs8Fwna1tNDYsGPL7XQXhjPgUu/SPFaUnXKpLFvt
-Hh8/5PzWxQYEhqwXFNHgWwaoSRsN3ZXukMsQlWA1UMJyJ8gaGRHPU06YySPadmxP
-8fPHEbg2BMfoRtM2mPZvctRZJEvelFEq4APN46hbAoGBALCWPxXW96Sh7UStFfPm
-6bX8j0crz+xpX5lAe0MiQv5TU6RBe0/YAQij3PNY3I/anUIVfJIqQeO3y7DPn3ut
-OYqXjbp5Z2i1BM5DhrpURVSCoM3ecHNCy2wWhxkT/WxZMbPcIypX0qJ9hNDixOCw
-Z2jMV2xc2IABW5vMpctrNxPfAoGBAMph5SB7ILYhNtYYiqZyTJpjO4oSx3IEMt2A
-85r8dzvaDNGMFBLdLLvnBn3admySVKUz94NsuMpUtQpEdNzJgMzhMiP1nL46Bqpe
-7nOjj6tqv+Lpox6y83Wn6SQgg81l0WqoH7QxX0zKI7DYqsN5QPg8Yfv8npUOcL/Y
-uxpCezQpAoGAOtNKptafWzlyk7lA3zd6pPgWej6VM+fTdW4cN/jXu/BdFyyHuR7P
-GCoaYlKGxk3JmNfyPi8XdzNlql2xCUg6WCiwxkRpIK1Ar9jV8p2+UwZQ6dWKmenF
-wS85lZoD+whKq1TCMTGYrDJYw3D8qPcKxM8JZ2X8VG4ZtXbyBlfWb48=
------END RSA PRIVATE KEY-----
 
 
 
