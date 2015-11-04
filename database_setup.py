@@ -60,7 +60,7 @@ class CatalogItem(Base):
             'user_id': self.user_id,
          }
 
-engine = create_engine('postgresql://catalog:dm2137@localhost/catalogitems')
+engine = create_engine('postgresql://catalog:cat15log@localhost/catalogitems')
 
 
 Base.metadata.create_all(engine)
