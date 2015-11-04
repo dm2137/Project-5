@@ -23,7 +23,7 @@ Vagrant.configure(2) do |config|
   # within the machine from a port on the host machine. In the example below,
   # accessing "localhost:8080" will access port 80 on the guest machine.
   # config.vm.network "forwarded_port", guest: 80, host: 8080
-  config.vm.network "forwarded_port", guest: 80, host:8080, auto_correct: true
+  #config.vm.network "forwarded_port", guest: 80, host:8080, auto_correct: true
   config.vm.network "forwarded_port", guest: 2200, host: 2200, id: "ssh"
   config.ssh.port = 2200 
   # Create a private network, which allows host-only access to the machine
@@ -40,7 +40,7 @@ Vagrant.configure(2) do |config|
   # the path on the guest to mount the folder. And the optional third
   # argument is a set of non-required options.
   # config.vm.synced_folder "../data", "/vagrant_data"
-
+  
   # Provider-specific configuration so you can fine-tune various
   # backing providers for Vagrant. These expose provider-specific options.
   # Example for VirtualBox:
@@ -48,6 +48,9 @@ Vagrant.configure(2) do |config|
   # config.vm.provider "virtualbox" do |vb|
   #   # Display the VirtualBox GUI when booting the machine
   #   vb.gui = true
+  #config.vm.provider :virtualbox do |vb|
+  #    vb.gui = true
+  #end
   #
   #   # Customize the amount of memory on the VM:
   #   vb.memory = "1024"
